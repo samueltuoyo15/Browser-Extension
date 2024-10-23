@@ -34,6 +34,19 @@ app.get('/weather', async (req, res) => {
     }
 })
 
+app.get('/getRandomImages', async (req, res) => {
+   const accessKey = process.env.ACCESS_KEY
+    try {
+        const response = await fetch(`https://api.unsplash.com/photos/random?query=nature&client_id=${accessKey}`)
+        const data = await response.json()
+        res.json(data)
+    }
+        catch (error) {
+        console.error(error)
+        res.status(500).send('Internal Server Error')
+    } 
+})
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'))
 })
