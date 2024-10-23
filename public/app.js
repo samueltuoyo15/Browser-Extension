@@ -1,3 +1,15 @@
+async function setRandomBackground() {
+    try {
+        const response = await fetch('/getRandomImages')
+        const data = await response.json()
+        const imageUrl = data.urls.full
+        document.body.style.backgroundImage = `url(${imageUrl})`
+    } catch (error) {
+        console.error('Error fetching the background image:', error)
+    }
+}
+
+setRandomBackground()
 setInterval(() => {
     const date = new Date()
     const currentTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -16,7 +28,7 @@ setInterval(() => {
     } else {
         text.textContent = 'Good Night,'
     }
-}, 1000)
+}, 100)
 
 const searchInput = document.querySelector('input')
 
@@ -38,3 +50,4 @@ const fetchWeatherTemperature = () => {
 }
 
 fetchWeatherTemperature()
+
