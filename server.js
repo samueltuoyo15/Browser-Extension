@@ -1,55 +1,44 @@
-import http from 'http'
-import url from 'url'
+import express from 'express'
 import path from 'path'
-import fs from 'fs/promises'
+import { fileURLToPath } from 'url'
 import fetch from 'node-fetch'
 import dotenv from 'dotenv'
-dotenv.config();
+dotenv.config()
 
-const API_KEY = process.env.API_KEY
+const app = express()
 
-const mimeTypes = {
-    '.html': 'text/html',
-    '.css': 'text/css',
-    '.js': 'application/javascript'
-};
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const publicDir = path.join(__dirname, 'public')
 
-const filename = url.fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
-const publicDir = path.join(dirname, 'public')
-
-const app = http.createServer(async (req, res) => {
+app.use(express.static(publicDir))
+app.enable('trust proxy')
+app.get('/weather', async (req, res) => {
     try {
-        if (req.url === '/weather') {
-            const city = 'Warri'
-            const apiUrl = process.env.END_POINT
+        const ip = req.ip
+        console.log(req.ip)
+        const geoResponse = await fetch(`https://ipinfo.io/${ip}/json?token=${process.env.IPINFO_TOKEN}`)
+        const geoData = await geoResponse.json()
+        const city = geoData.city
+        console.log(city)
+        const API_KEY = process.env.API_KEY
+        const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${city}`
+        const weatherResponse = await fetch(apiUrl)
+        const weatherData = await weatherResponse.json()
 
-            const weatherResponse = await fetch(apiUrl)
-            const weatherData = await weatherResponse.json()
-
-            res.writeHead(200, { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify(weatherData))
-            return
-        }
-        let filepath = path.join(publicDir, req.url === '/' ? 'index.html' : req.url)
-        const fileStat = await fs.stat(filepath)
-        
-        if (fileStat.isFile()) {
-            const extname = path.extname(filepath)
-            const mimeType = mimeTypes[extname] || 'application/octet-stream'
-            res.writeHead(200, { 'Content-Type': mimeType })
-            const data = await fs.readFile(filepath)
-            res.end(data)
-        } else{
-            res.writeHead(404, { 'Content-Type': 'text/plain' })
-            res.end('Not Found')
-        }
-    } catch (err) {
-        res.writeHead(500, { 'Content-Type': 'text/plain' })
-        res.end('Internal Server Error')
+        console.log(weatherData)
+        res.json(weatherData)
+    } catch (error) {
+        console.error(error)
+        res.status(500).send('Internal Server Error')
     }
-});
+})
 
-app.listen(process.env.PORT, () => {
-    console.log('App is running on http://localhost:' + process.env.PORT);
-});
+app.get('*', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'))
+})
+
+const PORT = process.env.PORT || 3030
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`)
+})
