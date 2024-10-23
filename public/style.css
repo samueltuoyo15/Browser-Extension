@@ -1,0 +1,74 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+
+body{
+    height: 100vh;
+    width: 100%;
+    background-image: url("https://images.unsplash.com/photo-1447875569765-2b3db822bec9?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zmxvd2VyfGVufDB8fDB8fHww");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    font-family: Sans-serif;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    color: #fff;
+    font-size: 1.5rem;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.footer{
+    padding: 20px 0;
+    color: #fff;
+    font-size: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#showcase{
+    text-align: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+#showcase #time-element{
+    font-size: 6rem;
+}
+
+#showcase input{
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 10px 0;
+    border-bottom: 2px solid white;
+    background: transparent;
+    caret-color: white;
+}
+
+input:focus{
+    outline: none;
+    color: white;
+}
+form{
+    margin-top: 40px;
+    padding: 20px;
+}
